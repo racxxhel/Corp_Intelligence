@@ -5,7 +5,34 @@ import numpy as np
 
 app = Flask(__name__)
 
-# --- 1. LOAD DATA ---
+CLUSTER_METADATA = {
+    0: {
+        "name": "Small Service Providers",
+        "summary": "Established small to mid-sized service firms relying on human expertise.",
+        "key_traits": ["Service-driven revenue", "Moderate team sizes", "Regional focus"],
+    },
+    1: {
+        "name": "Lean & IP-Driven Firms",
+        "summary": "High-revenue companies operating with extremely small teams.",
+        "key_traits": ["High rev/employee", "Expertise-driven", "Owner-led"],
+    },
+    2: {
+        "name": "Scaling Professional Firms",
+        "summary": "Growth-stage service companies expanding teams and market reach.",
+        "key_traits": ["Growing headcount", "Structured ops", "Balanced ratios"],
+    },
+    3: {
+        "name": "Industrial & Infrastructure",
+        "summary": "Large, asset-heavy firms operating in manufacturing and utilities.",
+        "key_traits": ["Capital-intensive", "Large workforce", "Complex ops"],
+    },
+    "micro": {
+        "name": "Micro & Low-Activity",
+        "summary": "Very small firms with limited economic footprint.",
+        "key_traits": ["Minimal revenue", "Small teams", "Early-stage"],
+    }
+}
+
 try:
     with open("data/clustered_companies.pkl", "rb") as f:
         df = pickle.load(f)
@@ -24,8 +51,6 @@ except Exception as e:
     print(f"Error loading data: {e}")
     df = pd.DataFrame()
     cluster_stats = {}
-
-# --- 2. ROUTES ---
 
 @app.route("/")
 def index():
