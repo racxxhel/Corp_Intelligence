@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IntelCorp Intelligence</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="logo"><i class="fa-solid fa-layer-group"></i> Datathon<span style="color: #60a5fa">'26</span></div>
+    
+    <div class="search-container">
+        <i class="fa-solid fa-search search-icon"></i>
+        <input type="text" id="searchInput" placeholder="Search Company (e.g. 'Zyf')..." autocomplete="off">
+        <div id="searchResults" class="search-results"></div>
+    </div>
+</nav>
+
+<div class="main-layout">
+    
+    <section class="dashboard-panel">
+        
+        <div class="company-header">
+            <h1 id="companyName">Select a Company...</h1>
+            <div class="badges">
+                <span class="badge" id="badgeLoc"><i class="fa-solid fa-location-dot"></i> --</span>
+                <span class="badge" id="badgeCluster"><i class="fa-solid fa-diagram-project"></i> --</span>
+            </div>
+        </div>
+
+        <div class="kpi-grid">
+            <div class="card">
+                <div class="label">Annual Revenue</div>
+                <div class="value" id="kpiRevenue">--</div>
+            </div>
+            <div class="card">
+                <div class="label">Total Employees</div>
+                <div class="value" id="kpiEmployees">--</div>
+            </div>
+            <div class="card">
+                <div class="label">Company Age</div>
+                <div class="value" id="kpiAge">--</div>
+            </div>
+            <div class="card">
+                <div class="label">Est. IT Spend</div>
+                <div class="value" id="kpiIT">--</div>
+            </div>
+            <div class="card">
+                <div class="label">Industry (SIC)</div>
+                <div class="sub" id="kpiSIC">--</div>
+            </div>
+        </div>
+
+        <div class="content-grid">
+            <div class="card chart-section">
+                <div class="card-header">
+                    <h3><i class="fa-solid fa-chart-column"></i> Performance vs Cluster Avg</h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="performanceChart"></canvas>
+                </div>
+            </div>
+
+            <div class="card table-section">
+                <div class="card-header">
+                    <h3><i class="fa-solid fa-link"></i> Similar Companies in the same cluster</h3>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr><th>Company Name</th><th>Revenue</th></tr>
+                        </thead>
+                        <tbody id="neighborTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <aside class="chat-panel">
+        <div class="chat-header">
+            <i class="fa-solid fa-robot"></i> AI Strategic Analyst
+        </div>
+        <div class="chat-window" id="chatContainer">
+            <div class="message bot"><p>Ready. Search for a company to begin.</p></div>
+        </div>
+        <div class="input-area">
+            <input type="text" id="chatInput" placeholder="Ask about risks...">
+            <button class="send-btn" onclick="sendUserMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+    </aside>
+
+</div>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+:root { --primary: #2563eb; --bg: #f1f5f9; --text: #0f172a; --border: #e2e8f0; }
+* { box-sizing: border-box; }
+body { margin: 0; font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+/* NAVBAR */
+.navbar { height: 64px; background: #1e293b; color: white; display: flex; align-items: center; padding: 0 2rem; justify-content: space-between; z-index: 1000; position: relative; }
+.logo { font-weight: 700; font-size: 1.2rem; }
+
+/* SEARCH BAR & DROPDOWN */
+.search-container { position: relative; width: 500px; }
+.search-container input { width: 100%; padding: 12px 16px 12px 40px; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: white; outline: none; }
+.search-icon { position: absolute; left: 14px; top: 14px; color: #94a3b8; }
+
+.search-results { display: none; position: absolute; top: 100%; left: 0; width: 100%; background: white; border-radius: 0 0 8px 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); z-index: 1001; max-height: 300px; overflow-y: auto; }
+.search-item { padding: 12px 15px; color: #1e293b; cursor: pointer; border-bottom: 1px solid #f1f5f9; background: white; }
+.search-item:hover { background: #eff6ff; color: var(--primary); }
+
+/* DASHBOARD */
+.main-layout { display: flex; flex: 1; overflow: hidden; }
+.dashboard-panel { flex: 3; padding: 2rem; overflow-y: auto; }
+.company-header h1 { margin: 0 0 10px 0; font-size: 1.8rem; }
+.badges { display: flex; gap: 10px; margin-bottom: 2rem; }
+.badge { padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; background: #e2e8f0; color: #475569; }
+
+/* KPIs */
+.kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 2rem; }
+.card { background: white; padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+.card .label { font-size: 0.85rem; color: #64748b; margin-bottom: 5px; }
+.card .value { font-size: 1.5rem; font-weight: 700; }
+.card .sub { font-size: 0.9rem; color: #64748b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* CONTENT GRID */
+.content-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; height: 350px; }
+.chart-section, .table-section { display: flex; flex-direction: column; overflow: hidden; }
+.chart-container { position: relative; flex: 1; padding: 10px; }
+.table-container { flex: 1; overflow-y: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+td { padding: 10px; border-bottom: 1px solid #f1f5f9; }
+
+/* CHAT */
+.chat-panel { flex: 1.2; background: white; border-left: 1px solid var(--border); display: flex; flex-direction: column; }
+.chat-header { padding: 1rem; border-bottom: 1px solid var(--border); font-weight: 600; }
+.chat-window { flex: 1; padding: 1rem; overflow-y: auto; background: #f8fafc; display: flex; flex-direction: column; gap: 10px; }
+.message { padding: 10px; border-radius: 8px; font-size: 0.9rem; max-width: 90%; }
+.bot { background: white; border: 1px solid var(--border); align-self: flex-start; }
+.input-area { padding: 1rem; border-top: 1px solid var(--border); display: flex; gap: 5px; }
+.input-area input { flex: 1; padding: 10px; border: 1px solid var(--border); border-radius: 6px; }
+.send-btn { background: var(--primary); color: white; border: none; padding: 0 15px; border-radius: 6px; cursor: pointer; }
