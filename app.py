@@ -62,10 +62,10 @@ def search():
     query = request.args.get('q', '').lower()
     if not query or df.empty: return jsonify([])
     
-    # Find matching names
     mask = df['Company Sites'].astype(str).str.lower().str.contains(query)
-    results = df[mask].head(6)['Company Sites'].tolist()
-    return jsonify(results)
+    candidates = df[mask]['Company Sites'].unique().tolist() 
+    candidates.sort(key=lambda x: 0 if x.lower().startswith(query) else 1) #prioritise those that start with query first 
+    return jsonify(candidates[:6])
 
 @app.route("/api/get_company")
 def get_company():
@@ -100,8 +100,8 @@ def get_company():
             "country": row.get('Country', '-'),
             
             # The 5 KPIs
-            "revenue": float(row.get('Revenue (USD)', 0)),
-            "employees": int(row.get('Employees Total', 'Unreported')),
+            "revenue": float(row.get('Revenue (USD)', 'Unreported')),
+            "employees": "Unreported" if row.get('Employees Total') == 0 else int(row.get('Employees Total')),
             "age": age,
             "it_spend": float(row.get('IT spend', 0)),
             "sic": row.get('SIC Description', 'Unknown'),
