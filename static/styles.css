@@ -42,7 +42,12 @@ td { padding: 10px; border-bottom: 1px solid #f1f5f9; }
 .chat-header { padding: 1rem; border-bottom: 1px solid var(--border); font-weight: 600; }
 .chat-window { flex: 1; padding: 1rem; overflow-y: auto; background: #f8fafc; display: flex; flex-direction: column; gap: 10px; }
 .message { padding: 10px; border-radius: 8px; font-size: 0.9rem; max-width: 90%; }
+.message p { white-space: pre-wrap; }
 .bot { background: white; border: 1px solid var(--border); align-self: flex-start; }
 .input-area { padding: 1rem; border-top: 1px solid var(--border); display: flex; gap: 5px; }
 .input-area input { flex: 1; padding: 10px; border: 1px solid var(--border); border-radius: 6px; }
 .send-btn { background: var(--primary); color: white; border: none; padding: 0 15px; border-radius: 6px; cursor: pointer; }
+.sample-prompts { padding: 15px; display: flex; gap: 8px; flex-direction: column;  flex-wrap: wrap; background: #f8fafc; border-top: none;}
+.prompt-btn { background: white; border: 1px solid var(--primary); color: var(--primary); padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;}
+
+.prompt-btn:hover { background: var(--primary); color: white;}

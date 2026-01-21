@@ -2,6 +2,8 @@ from flask import Flask, render_template, request, jsonify
 import pandas as pd
 import pickle
 import numpy as np
+import requests # Add this to your imports
+from huggingface_hub import InferenceClient
 
 app = Flask(__name__)
 
@@ -36,6 +38,11 @@ CLUSTER_METADATA = {
 try:
     with open("data/clustered_companies.pkl", "rb") as f:
         df = pickle.load(f)
+
+    for col in df.select_dtypes(['category']).columns:
+        df[col] = df[col].astype(str)
+    df = df.fillna("N/A")
+
     print("Data Loaded Successfully!")
     
     # Ensure numeric columns are actually numeric
@@ -84,6 +91,9 @@ def get_company():
         cid = row.get('Cluster', 0)
         stats = cluster_stats.get(cid, {})
 
+        # Get company description
+        comp_desc = row.get('Company Description', 'No description available for this company.')
+
         # Find Nearest Neighbors (Same Cluster, Similar Revenue)
         cluster_peers = df[df['Cluster'] == cid].copy()
         cluster_peers['diff'] = abs(cluster_peers['Revenue (USD)'] - row['Revenue (USD)'])
@@ -98,6 +108,7 @@ def get_company():
             "name": row['Company Sites'],
             "city": row.get('City', '-'),
             "country": row.get('Country', '-'),
+            "description": row.get('Company Description', 'Unknown'),
             
             # The 5 KPIs
             "revenue": float(row.get('Revenue (USD)', 'Unreported')),
@@ -118,6 +129,77 @@ def get_company():
 
     except IndexError:
         return jsonify({"error": "Company not found"})
+
+
+HF_TOKEN = "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"
+client = InferenceClient(api_key=HF_TOKEN)
+
+@app.route("/api/chat", methods=["POST"])
+def chat():
+    try:
+        data = request.json
+        user_message = data.get("message")
+        context = data.get("context", {}) 
+
+        # Create a summary of all clusters
+        all_clusters_summary = ""
+        for cid_key, info in CLUSTER_METADATA.items():
+            # Get stats if they exist in your cluster_stats dictionary
+            stats = cluster_stats.get(cid_key, {})
+            avg_rev = f"${stats.get('Revenue (USD)', 0):,.0f}"
+            
+            all_clusters_summary += f"""
+            CLUSTER {cid_key} ({info['name']}):
+            - Profile: {info['summary']}
+            - Avg Revenue: {avg_rev}
+            - Traits: {", ".join(info['key_traits'])}
+            """
+
+        # 2. Content Grounding
+        system_instruction = f"""
+        You are an expert sales analyst. You have access to data for a specific company and the broader market segmentation (Clusters).
+        
+        MARKET SEGMENTATION DATA (All Clusters):
+        {all_clusters_summary}
+
+        TARGET COMPANY DATA:
+
+        - Name: {context.get('name', 'N/A')}
+        - Company Description: {context.get('description', 'N/A')}
+        - SIC Industry Category: {context.get('sic', 'N/A')}
+        - Revenue: ${context.get('revenue', 0):,.0f}
+        - Employees: {context.get('employees', 'N/A')}
+        - IT Spend: ${context.get('it_spend', 0):,.0f}
+        - Current Cluster: {context.get('cluster_id', 'N/A')}
+
+        RULES:
+        - DO NOT USE MARKDOWN (No asterisks **, no hashtags #).
+        - If the 'Description' is missing or "N/A", use the 'SIC Industry' (Standard Industrial Classification) to explain what the company does.
+        If BOTH are missing, use the 'Name' but state clearly that you are making an educated guess based on the title.
+        - Use the MARKET SEGMENTATION DATA to answer questions about other groups.
+        - If asked to compare, look at the traits and averages of both clusters.
+        - If the description is missing, state that you are analyzing based on name and stats only.
+
+        Output Format:
+        1. Observed Trend: (Analysis of the question)
+        2. Data-Driven Explanation: (Use specific stats from any cluster mentioned)
+        3. Limitations: (Missing info)
+        """
+
+        response = client.chat.completions.create(
+            model="meta-llama/Llama-3.1-8B-Instruct:fastest",
+            messages=[
+                {"role": "system", "content": system_instruction},
+                {"role": "user", "content": user_message}
+            ],
+            max_tokens=450 
+        )
+
+        return jsonify({"response": response.choices[0].message.content})
+
+    except Exception as e:
+        print(f"Backend Error: {e}")
+        return jsonify({"response": "Error. Please try again."})
 
 if __name__ == "__main__":
     app.run(debug=True)

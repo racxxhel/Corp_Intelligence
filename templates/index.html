@@ -43,7 +43,7 @@
                 <div class="value" id="kpiEmployees">--</div>
             </div>
             <div class="card">
-                <div class="label">Company Age</div>
+                <div class="label">Year Founded</div>
                 <div class="value" id="kpiAge">--</div>
             </div>
             <div class="card">
@@ -89,6 +89,13 @@
         <div class="chat-window" id="chatContainer">
             <div class="message bot"><p>Ready. Search for a company to begin.</p></div>
         </div>
+
+        <div class="sample-prompts">
+            <button class="prompt-btn" onclick="sendQuickPrompt('What is the primary business activity of this company?')"> What is their primary business activity?</button>
+            <button class="prompt-btn" onclick="sendQuickPrompt('How does their revenue and IT spend compare to the cluster averages?')"> Compare revenue and IT spend to peers</button>
+            <button class="prompt-btn" onclick="sendQuickPrompt('Identify the key market risks and growth opportunities for this firm.')"> Identify market risks and opportunities</button>
+        </div>
+
         <div class="input-area">
             <input type="text" id="chatInput" placeholder="Ask about risks...">
             <button class="send-btn" onclick="sendUserMessage()"><i class="fa-solid fa-paper-plane"></i></button>

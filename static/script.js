@@ -1,6 +1,7 @@
 const searchInput = document.getElementById('searchInput');
 const resultsBox = document.getElementById('searchResults');
 let perfChart = null; 
+let currentCompanyData = null;
 
 searchInput.addEventListener('input', function() {
     const query = this.value.trim();
@@ -39,6 +40,7 @@ function loadCompanyData(exactName) {
         .then(res => res.json())
         .then(data => {
             if (data.error) { alert(data.error); return; }
+            currentCompanyData = data;
             updateDashboard(data);
         });
 }
@@ -104,4 +106,47 @@ function updateChart(data) {
         },
         options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
     });
+}
+
+function displayMessage(sender, message) {
+    const chatContainer = document.getElementById('chatContainer');
+    const msgDiv = document.createElement('div');
+    msgDiv.className = `message ${sender.toLowerCase()}`;
+    msgDiv.innerHTML = `<p><strong>${sender}:</strong> ${message}</p>`;
+    chatContainer.appendChild(msgDiv);
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+}
+
+async function sendUserMessage() {
+    const chatInputElement = document.getElementById("chatInput");
+    const userMessage = chatInputElement.value.trim();
+    
+    if (!userMessage || !currentCompanyData) return;
+
+    displayMessage("You", userMessage); 
+    chatInputElement.value = "";
+
+    try {
+        const response = await fetch("/api/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                message: userMessage,
+                context: currentCompanyData 
+            })
+        });
+
+        const data = await response.json();
+        displayMessage("AI", data.response);
+    } catch (error) {
+        displayMessage("AI", "Sorry, I'm having trouble connecting to the brain.");
+    }
+}
+
+function sendQuickPrompt(text) {
+    const chatInput = document.getElementById("chatInput");
+    chatInput.value = text;
+    
+    // Trigger the existing send function
+    sendUserMessage();
 }
