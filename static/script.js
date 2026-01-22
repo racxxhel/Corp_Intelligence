@@ -50,12 +50,12 @@ function updateDashboard(data) {
     document.getElementById('companyName').textContent = data.name;
     document.getElementById('badgeLoc').innerHTML = `<i class="fa-solid fa-location-dot"></i> ${data.city}, ${data.country}`;
     
-    const clusters = { 0: "Emerging SME", 1: "High Growth", 2: "Mature Corp", 3: "Global Giant" };
+    const clusters = { 0: "Small Service Providers", 1: "Lean & IP-Driven Firms", 2: "Scaling Professional Firms", 3: "Industrial & Infrastructure", "micro": "Micro & Low-Activity"};
     const cName = clusters[data.cluster_id] || `Cluster ${data.cluster_id}`;
     document.getElementById('badgeCluster').innerHTML = `<i class="fa-solid fa-diagram-project"></i> ${cName}`;
 
     // KPIs
-    const fmtMoney = (n) => n ? "$" + (n / 1000000).toFixed(1) + "M" : "$0";
+    const fmtMoney = n => !n ? "$0" : n < 1_000_000 ? `$${Math.floor(n / 1_000)}K` : `$${(n / 1_000_000).toFixed(2)}M`;
     document.getElementById('kpiRevenue').textContent = fmtMoney(data.revenue);
     document.getElementById('kpiEmployees').textContent = data.employees.toLocaleString();
     document.getElementById('kpiAge').textContent = data.age;
@@ -106,6 +106,10 @@ function updateChart(data) {
         },
         options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
     });
+}
+
+function toggleChat(){
+  document.querySelector('.chat-panel').classList.toggle('active');
 }
 
 function displayMessage(sender, message) {
