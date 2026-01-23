@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, jsonify
 import pandas as pd
 import pickle
 import numpy as np
-import requests # Add this to your imports
+import requests 
 import os
 from huggingface_hub import InferenceClient
 
@@ -36,7 +36,7 @@ CLUSTER_METADATA = {
         "key_traits": ["Capital-intensive", "Large workforce", "Complex ops"],
     },
     4: {
-        "name": "ICluster 4",
+        "name": "Cluster 4",
         "summary": "Large, asset-heavy firms operating in manufacturing and utilities.",
         "key_traits": ["Capital-intensive", "Large workforce", "Complex ops"],
     },
@@ -58,25 +58,43 @@ CLUSTER_METADATA = {
 }
 
 try:
+
     with open("data/clustered_companies.pkl", "rb") as f:
         df = pickle.load(f)
 
     for col in df.columns:
+        df[col] = df[col].astype(object)
+    
+    # Clean the column names (remove any hidden space)
+    df.columns = df.columns.str.strip()
+    
+    # Fix String and Object types to remove trailing whitespace 
+    for col in df.columns:
         if df[col].dtype.name in ["string", "object", "category"]:
-            df[col] = df[col].astype(str)
+            # Convert to  string and strip gap
+            df[col] = df[col].astype(str).str.strip()
+
+    # Handle missing values
     df = df.fillna("N/A")
 
-    print("Data Loaded Successfully!")
-    
     # Ensure numeric columns are actually numeric
     cols_to_numeric = ['Revenue (USD)', 'Employees Total', 'IT spend', 'Year Found']
     for col in cols_to_numeric:
         if col in df.columns:
             df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0)
 
-    # Pre-calculate Cluster Averages for the Graph
-    cluster_stats = df.groupby('Cluster')[['Revenue (USD)', 'IT spend']].mean().to_dict(orient='index')
 
+
+    # Pre-calculate Cluster Averages for the Graph
+    if 'Cluster' in df.columns:
+        cluster_stats = df.groupby('Cluster')[['Revenue (USD)', 'IT spend']].mean().to_dict(orient='index')
+
+    else:
+        cluster_stats = {}
+
+    print("Data Loaded and Cleaned Successfully!")
+
+    
 except Exception as e:
     print(f"Error loading data: {e}")
     df = pd.DataFrame()
@@ -170,18 +188,38 @@ def chat():
             # Get stats if they exist in your cluster_stats dictionary
             stats = cluster_stats.get(cid_key, {})
             avg_rev = f"${stats.get('Revenue (USD)', 0):,.0f}"
+            avg_it = f"${stats.get('IT spend', 0):,.0f}"
+            avg_emp = round(stats.get('Employees Total', 0), 1)
+            avg_fam = round(stats.get('Corporate Family Members', 0), 1)
             
             all_clusters_summary += f"""
             CLUSTER {cid_key} ({info['name']}):
             - Profile: {info['summary']}
             - Avg Revenue: {avg_rev}
             - Traits: {", ".join(info['key_traits'])}
+            - Industries: {info.get('SIC_2digit_Description', 'Various')}
             """
-
+            
         # 2. Content Grounding
         system_instruction = f"""
         You are an expert sales analyst. You have access to data for a specific company and the broader market segmentation (Clusters).
         
+        DATA COMPARISON RULES:
+        - Compare the 'Target Company' against the 'Market Segmentation Data'.
+        - Specifically look at 'IT spend' vs 'Revenue' to determine if they are over or under-investing.
+        - Look at 'Corporate Family Members' to see if they are part of a large enterprise or a standalone firm.
+        - If the company is a 'Branch' or 'Subsidiary' (from Entity Type), mention how that affects their decision-making.
+
+        RULES:
+        - NEVER use asterisks (**), hashtags (#), or dashes (-) for bullet points.
+        - DO NOT use any Markdown symbols whatsoever.
+        - Use only standard capitalization and line breaks for structure.
+        - If the 'Description' is missing or "N/A", use the 'SIC Industry' (Standard Industrial Classification) to explain what the company does.
+        If BOTH are missing, use the 'Name' but state clearly that you are making an educated guess based on the title.
+        - If asked to compare, look at the traits and averages of both clusters.
+        - If the description is missing, state that you are analyzing based on name and stats only.
+
+
         MARKET SEGMENTATION DATA (All Clusters):
         {all_clusters_summary}
 
@@ -195,17 +233,12 @@ def chat():
         - IT Spend: ${context.get('it_spend', 0):,.0f}
         - Current Cluster: {context.get('cluster_id', 'N/A')}
 
-        RULES:
-        - DO NOT USE MARKDOWN (No asterisks **, no hashtags #).
-        - If the 'Description' is missing or "N/A", use the 'SIC Industry' (Standard Industrial Classification) to explain what the company does.
-        If BOTH are missing, use the 'Name' but state clearly that you are making an educated guess based on the title.
-        - Use the MARKET SEGMENTATION DATA to answer questions about other groups.
-        - If asked to compare, look at the traits and averages of both clusters.
-        - If the description is missing, state that you are analyzing based on name and stats only.
-
+        
         Output Format:
         1. Observed Trend: (Analysis of the question)
+
         2. Data-Driven Explanation: (Use specific stats from any cluster mentioned)
+
         3. Limitations: (Missing info)
         """
 

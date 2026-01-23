@@ -76,9 +76,9 @@ function updateDashboard(data) {
     const chat = document.getElementById('chatContainer');
     chat.innerHTML += `
         <div class="message bot">
-            <p><strong>Loaded: ${data.name}</strong></p>
-            <p>This is a company in the <strong>${cName}</strong> cluster.</p>
-            <p>Compared to peers, their IT spend is <strong>${data.it_spend > data.cluster_avg_it ? "Higher" : "Lower"}</strong> than average.</p>
+            <strong>Loaded: ${data.name}</strong><br>
+            This is a company in the <strong>${cName}</strong> cluster.<br>
+            Compared to peers, their IT spend is <strong>${data.it_spend > data.cluster_avg_it ? "Higher" : "Lower"}</strong> than average.
         </div>`;
     chat.scrollTop = chat.scrollHeight;
 }
