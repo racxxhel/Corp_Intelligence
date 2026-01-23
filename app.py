@@ -5,6 +5,7 @@ import numpy as np
 import requests 
 import os
 from huggingface_hub import InferenceClient
+from dotenv import load_dotenv
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -190,9 +191,9 @@ def get_company():
         return jsonify({"error": str(e)}), 500
 
 
-
-HF_TOKEN = "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"
-client = InferenceClient(api_key=HF_TOKEN)
+load_dotenv()
+hf_access_token = os.getenv("HF_TOKEN")
+client = InferenceClient(api_key=hf_access_token)
 
 @app.route("/api/chat", methods=["POST"])
 def chat():

@@ -61,6 +61,11 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
+**4. Create a Hugging Face Token**
+
+A token is needed to access the Large Lanuage Model through an API, which is used for our chatbot.
+
+
 ## How to Run:
 
 There are two main components to this project: reproducing the experiments and running the web app.
