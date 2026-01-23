@@ -3,9 +3,16 @@ import pandas as pd
 import pickle
 import numpy as np
 import requests # Add this to your imports
+import os
 from huggingface_hub import InferenceClient
 
-app = Flask(__name__)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+app = Flask(
+    __name__,
+    static_folder=os.path.join(BASE_DIR, "frontend", "static"),
+    template_folder=os.path.join(BASE_DIR, "frontend", "templates")
+)
 
 CLUSTER_METADATA = {
     0: {
@@ -28,6 +35,21 @@ CLUSTER_METADATA = {
         "summary": "Large, asset-heavy firms operating in manufacturing and utilities.",
         "key_traits": ["Capital-intensive", "Large workforce", "Complex ops"],
     },
+    4: {
+        "name": "ICluster 4",
+        "summary": "Large, asset-heavy firms operating in manufacturing and utilities.",
+        "key_traits": ["Capital-intensive", "Large workforce", "Complex ops"],
+    },
+    5: {
+        "name": "Cluster 5",
+        "summary": "Large, asset-heavy firms operating in manufacturing and utilities.",
+        "key_traits": ["Capital-intensive", "Large workforce", "Complex ops"],
+    },
+    6: {
+        "name": "Cluster 6",
+        "summary": "Large, asset-heavy firms operating in manufacturing and utilities.",
+        "key_traits": ["Capital-intensive", "Large workforce", "Complex ops"],
+    },  
     "micro": {
         "name": "Micro & Low-Activity",
         "summary": "Very small firms with limited economic footprint.",
@@ -39,8 +61,9 @@ try:
     with open("data/clustered_companies.pkl", "rb") as f:
         df = pickle.load(f)
 
-    for col in df.select_dtypes(['category']).columns:
-        df[col] = df[col].astype(str)
+    for col in df.columns:
+        if df[col].dtype.name in ["string", "object", "category"]:
+            df[col] = df[col].astype(str)
     df = df.fillna("N/A")
 
     print("Data Loaded Successfully!")

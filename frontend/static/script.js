@@ -50,7 +50,7 @@ function updateDashboard(data) {
     document.getElementById('companyName').textContent = data.name;
     document.getElementById('badgeLoc').innerHTML = `<i class="fa-solid fa-location-dot"></i> ${data.city}, ${data.country}`;
     
-    const clusters = { 0: "Small Service Providers", 1: "Lean & IP-Driven Firms", 2: "Scaling Professional Firms", 3: "Industrial & Infrastructure", "micro": "Micro & Low-Activity"};
+    const clusters = { 0: "Small Service Providers", 1: "Lean & IP-Driven Firms", 2: "Scaling Professional Firms", 3: "Industrial & Infrastructure", 4:"Cluster 4", 5:"Cluster 5", 6: "Cluster 6", "micro": "Micro & Low-Activity"};
     const cName = clusters[data.cluster_id] || `Cluster ${data.cluster_id}`;
     document.getElementById('badgeCluster').innerHTML = `<i class="fa-solid fa-diagram-project"></i> ${cName}`;
 
