@@ -52,7 +52,6 @@ try:
 
     with open("data/clustered_companies.pkl", "rb") as f:
         df = pickle.load(f)
-        print(df.columns.tolist())
 
     # for col in df.columns:
         # df[col] = df[col].astype(object)
