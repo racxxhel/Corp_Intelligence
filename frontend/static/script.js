@@ -53,13 +53,24 @@ function updateDashboard(data) {
     const clusters = { 0: "Small Service Providers", 1: "Lean & IP-Driven Firms", 2: "Scaling Professional Firms", 3: "Industrial & Infrastructure", 4:"Cluster 4", 5:"Cluster 5", 6: "Cluster 6", "micro": "Micro & Low-Activity"};
     const cName = clusters[data.cluster_id] || `Cluster ${data.cluster_id}`;
     document.getElementById('badgeCluster').innerHTML = `<i class="fa-solid fa-diagram-project"></i> ${cName}`;
+    document.getElementById("badgeYearFounded").innerHTML = `<i class="fa-solid fa-calendar"></i> Founded in ${data.age}`;
+    
+    // COMPANY DESCRIPTION
+    const desc =
+        data.comp_desc &&
+            data.comp_desc !== "nan" &&
+            data.comp_desc !== "NaN"
+            ? data.comp_desc
+            : "No description available for this company.";
+
+    document.getElementById("kpiDescription").innerText = desc;
+
 
     // KPIs
     const fmtMoney = n => !n ? "$0" : n < 1_000_000 ? `$${Math.floor(n / 1_000)}K` : `$${(n / 1_000_000).toFixed(2)}M`;
     document.getElementById('kpiRevenue').textContent = fmtMoney(data.revenue);
     document.getElementById('kpiEmployees').textContent = 
         typeof data.employees === 'number' ? data.employees.toLocaleString() : data.employees;
-    document.getElementById('kpiAge').textContent = data.age;
     document.getElementById('kpiIT').textContent = fmtMoney(data.it_spend);
     document.getElementById('kpiSIC').textContent = data.sic;
 

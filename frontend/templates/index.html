@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,151 +15,158 @@
 
 <body>
 
-<nav class="navbar">
-  <div class="nav-content">
-    <div class="logo">
-      <i class="fa-solid fa-layer-group"></i> Datathon<span style="color:#60a5fa">'26</span>
-    </div>
-
-    <div class="search-container">
-      <i class="fa-solid fa-search search-icon"></i>
-      <input type="text" id="searchInput" placeholder="Search Company (e.g. 'Zyf')..." autocomplete="off">
-      <div id="searchResults" class="search-results"></div>
-    </div>
-
-    <button class="chat-toggle" onclick="toggleChat()">
-        <i class="fa-solid fa-robot"></i>
-    </button>
-
-  </div>
-</nav>
-
-<main class="main-layout">
-
-    <!-- DASHBOARD -->
-    <section class="dashboard-panel">
-
-        <header class="company-header">
-            <h1 id="companyName">Select a Company...</h1>
-
-            <div class="badges">
-                <span class="badge" id="badgeLoc">
-                    <i class="fa-solid fa-location-dot"></i> --
-                </span>
-                <span class="badge" id="badgeCluster">
-                    <i class="fa-solid fa-diagram-project"></i> --
-                </span>
-            </div>
-        </header>
-
-        <!-- KPI GRID -->
-        <section class="kpi-grid">
-            <div class="card">
-                <div class="label">Annual Revenue</div>
-                <div class="value" id="kpiRevenue">--</div>
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="logo">
+                <i class="fa-solid fa-layer-group"></i> Datathon<span style="color:#60a5fa">'26</span>
             </div>
 
-            <div class="card">
-                <div class="label">Total Employees</div>
-                <div class="value" id="kpiEmployees">--</div>
+            <div class="search-container">
+                <i class="fa-solid fa-search search-icon"></i>
+                <input type="text" id="searchInput" placeholder="Search Company (e.g. 'Zyf')..." autocomplete="off">
+                <div id="searchResults" class="search-results"></div>
             </div>
 
-            <div class="card">
-                <div class="label">Year Founded</div>
-                <div class="value" id="kpiAge">--</div>
-            </div>
+            <button class="chat-toggle" onclick="toggleChat()">
+                <i class="fa-solid fa-robot"></i>
+            </button>
 
-            <div class="card">
-                <div class="label">Est. IT Spend</div>
-                <div class="value" id="kpiIT">--</div>
-            </div>
+        </div>
+    </nav>
 
-            <div class="card">
-                <div class="label">Industry (SIC)</div>
-                <div class="value" id="kpiSIC">--</div>
-            </div>
+    <main class="main-layout">
+
+        <!-- DASHBOARD -->
+        <section class="dashboard-panel">
+
+            <header class="company-header">
+                <h1 id="companyName">Select a Company...</h1>
+
+                <div class="badges">
+                    <span class="badge" id="badgeLoc">
+                        <i class="fa-solid fa-location-dot"></i> --
+                    </span>
+                    <span class="badge" id="badgeYearFounded">
+                        <i class="fa-solid fa-calendar"></i> --
+                    </span>
+                    <span class="badge" id="badgeCluster">
+                        <i class="fa-solid fa-diagram-project"></i> --
+                    </span>
+                </div>
+            </header>
+
+            <!-- COMPANY DESCRIPTION -->
+            <section class="company-description">
+                <div class="card">
+                    <div class="label">Company Description</div>
+                    <div class="description" id="kpiDescription">--</div>
+                </div>
+            </section>
+
+            <!-- KPI GRID -->
+            <section class="kpi-grid">
+                <div class="card">
+                    <div class="label">Annual Revenue</div>
+                    <div class="value" id="kpiRevenue">--</div>
+                </div>
+
+                <div class="card">
+                    <div class="label">Total Employees</div>
+                    <div class="value" id="kpiEmployees">--</div>
+                </div>
+
+                <div class="card">
+                    <div class="label">Est. IT Spend</div>
+                    <div class="value" id="kpiIT">--</div>
+                </div>
+
+                <div class="card">
+                    <div class="label">Industry (SIC)</div>
+                    <div class="value" id="kpiSIC">--</div>
+                </div>
+            </section>
+
+            <!-- CONTENT GRID -->
+            <section class="content-grid">
+
+                <div class="card chart-section">
+                    <div class="card-header">
+                        <h3>
+                            <i class="fa-solid fa-chart-column"></i>
+                            Performance vs Cluster Avg
+                        </h3>
+                    </div>
+
+                    <div class="chart-container">
+                        <canvas id="performanceChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="card table-section">
+                    <div class="card-header">
+                        <h3>
+                            <i class="fa-solid fa-link"></i>
+                            Similar Companies in the Same Cluster
+                        </h3>
+                    </div>
+
+                    <!-- KEY: wrapper enables horizontal scroll on mobile -->
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Company Name</th>
+                                    <th>Revenue</th>
+                                </tr>
+                            </thead>
+                            <tbody id="neighborTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </section>
         </section>
 
-        <!-- CONTENT GRID -->
-        <section class="content-grid">
+        <!-- CHAT -->
+        <aside class="chat-panel">
+            <div class="chat-header">
+                <i class="fa-solid fa-robot"></i> AI Strategic Analyst
+            </div>
 
-            <div class="card chart-section">
-                <div class="card-header">
-                    <h3>
-                        <i class="fa-solid fa-chart-column"></i>
-                        Performance vs Cluster Avg
-                    </h3>
-                </div>
-
-                <div class="chart-container">
-                    <canvas id="performanceChart"></canvas>
+            <div class="chat-window" id="chatContainer">
+                <div class="message bot">
+                    <p>Ready. Search for a company to begin.</p>
                 </div>
             </div>
 
-            <div class="card table-section">
-                <div class="card-header">
-                    <h3>
-                        <i class="fa-solid fa-link"></i>
-                        Similar Companies in the Same Cluster
-                    </h3>
-                </div>
+            <div class="sample-prompts">
+                <button class="prompt-btn"
+                    onclick="sendQuickPrompt('Is a team of this size typical for a company within this cluster, or are they operating more leanly than their peers?')">
+                    Workforce Benchmarking
+                </button>
 
-                <!-- KEY: wrapper enables horizontal scroll on mobile -->
-                <div class="table-wrapper">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Company Name</th>
-                                <th>Revenue</th>
-                            </tr>
-                        </thead>
-                        <tbody id="neighborTable"></tbody>
-                    </table>
-                </div>
+                <button class="prompt-btn"
+                    onclick="sendQuickPrompt('Compared to similar firms, is this infrastructure investment considered heavy or light based on their current IT spend?')">
+                    Infrastructure Analysis
+                </button>
+
+                <button class="prompt-btn"
+                    onclick="sendQuickPrompt('How does this company’s corporate family size compare to the cluster average, and what does that suggest about their organizational complexity?')">
+                    Corporate Hierarchy
+                </button>
             </div>
 
-        </section>
-    </section>
-
-    <!-- CHAT -->
-    <aside class="chat-panel">
-        <div class="chat-header">
-            <i class="fa-solid fa-robot"></i> AI Strategic Analyst
-        </div>
-
-        <div class="chat-window" id="chatContainer">
-            <div class="message bot">
-                <p>Ready. Search for a company to begin.</p>
+            <div class="input-area">
+                <input type="text" id="chatInput" placeholder="Ask about risks...">
+                <button class="send-btn" onclick="sendUserMessage()">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
             </div>
-        </div>
+        </aside>
 
-        <div class="sample-prompts">
-            <button class="prompt-btn"
-                onclick="sendQuickPrompt('Is a team of this size typical for a company within this cluster, or are they operating more leanly than their peers?')">
-                Workforce Benchmarking
-            </button>
+    </main>
 
-            <button class="prompt-btn"
-                onclick="sendQuickPrompt('Compared to similar firms, is this infrastructure investment considered heavy or light based on their current IT spend?')">
-                Infrastructure Analysis
-            </button>
-
-            <button class="prompt-btn"
-                onclick="sendQuickPrompt('How does this company’s corporate family size compare to the cluster average, and what does that suggest about their organizational complexity?')">
-                Corporate Hierarchy
-            </button>
-        </div>
-
-        <div class="input-area">
-            <input type="text" id="chatInput" placeholder="Ask about risks...">
-            <button class="send-btn" onclick="sendUserMessage()">
-                <i class="fa-solid fa-paper-plane"></i>
-            </button>
-        </div>
-    </aside>
-
-</main>
-
-<script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
+
 </html>

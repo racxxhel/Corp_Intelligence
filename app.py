@@ -108,65 +108,83 @@ def search():
 
 @app.route("/api/get_company")
 def get_company():
-    """Returns Full Data for One Company"""
     name = request.args.get('name')
-    if df.empty: return jsonify({"error": "No data loaded"})
+    if df.empty:
+        return jsonify({"error": "No data loaded"})
 
     try:
-        # Find exact match
         row = df[df['Company Sites'] == name].iloc[0]
-        
-        # Get Age
-        age = row.get('Year Found', 'Unreported')
 
-        # Get Cluster Context
+        # ---------- Year Founded ----------
+        year_founded = row.get('Year Found')
+        if pd.isna(year_founded) or year_founded == 0:
+            age = "Unreported"
+        else:
+            age = int(year_founded)
+
+        # ---------- Company Description ----------
+        raw_desc = row.get('Company Description')
+        comp_desc = (
+            raw_desc
+            if pd.notna(raw_desc) and str(raw_desc).strip() != ""
+            else "No description available for this company."
+        )
+
+        # ---------- Cluster ----------
         cid = row.get('hybrid_Cluster', 0)
         stats = cluster_stats.get(cid, {})
 
-        # Get company description
-        comp_desc = row.get('Company Description', 'No description available for this company.')
-
-        # Find Nearest Neighbors (Same Cluster, Similar Revenue)
+        # ---------- Neighbors ----------
         cluster_peers = df[df['hybrid_Cluster'] == cid].copy()
-        cluster_peers['diff'] = abs(cluster_peers['Revenue (USD)'] - row['Revenue (USD)'])
-        
-        # Get top 5 neighbors (excluding itself)
-        neighbors = cluster_peers.sort_values('diff').head(6)
-        neighbors = neighbors[neighbors['Company Sites'] != name].head(5)
-        
-        # neighbor_list = neighbors[['Company Sites', 'Revenue (USD)']].to_dict(orient='records')
-        neighbor_list = []
-        for _, n_row in neighbors.iterrows():
-            neighbor_list.append({
-                "name": str(n_row['Company Sites']),
-                "revenue": float(n_row['Revenue (USD)'])
-            })
+        cluster_peers['diff'] = abs(
+            cluster_peers['Revenue (USD)'] - row['Revenue (USD)']
+        )
 
+        neighbors = (
+            cluster_peers
+            .sort_values('diff')
+            .query("`Company Sites` != @name")
+            .head(5)
+        )
+
+        neighbor_list = [
+            {
+                "name": str(n['Company Sites']),
+                "revenue": float(n['Revenue (USD)'])
+            }
+            for _, n in neighbors.iterrows()
+        ]
+
+        # ---------- Response ----------
         response = {
             "name": str(row['Company Sites']),
             "city": str(row.get('City', '-')),
             "country": str(row.get('Country', '-')),
-            "description": str(row.get('Company Description', 'Unknown')),
-            
-            "revenue": float(row.get('Revenue (USD)', 0)) if row.get('Revenue (USD)') != 'Unreported' else 0,
-            "employees": "Unreported" if int(row.get('Employees Total')) == 0 else int(row.get('Employees Total')),
-            "age": int(age),
+            "comp_desc": comp_desc,
+
+            "revenue": float(row.get('Revenue (USD)', 0)),
+            "employees": (
+                "Unreported"
+                if int(row.get('Employees Total', 0)) == 0
+                else int(row.get('Employees Total'))
+            ),
+            "age": age,
             "it_spend": float(row.get('IT spend', 0)),
             "sic": str(row.get('SIC Description', 'Unknown')),
             "corp_family": int(row.get('Corporate Family Members', 0)),
 
-            # Cluster Context for AI/Graph
             "cluster_id": int(cid),
             "cluster_avg_rev": float(stats.get('Revenue (USD)', 0)),
             "cluster_avg_it": float(stats.get('IT spend', 0)),
-            
-            # Neighbors Table
+
             "neighbors": neighbor_list
         }
+
         return jsonify(response)
 
-    except IndexError:
-        return jsonify({"error": "Company not found"})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 
 HF_TOKEN = "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"
