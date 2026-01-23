@@ -115,6 +115,9 @@ def get_company():
     try:
         row = df[df['Company Sites'] == name].iloc[0]
 
+        # ---------- Website ----------
+        website = row.get('Website', None)
+
         # ---------- Year Founded ----------
         year_founded = row.get('Year Found')
         if pd.isna(year_founded) or year_founded == 0:
@@ -158,6 +161,7 @@ def get_company():
         # ---------- Response ----------
         response = {
             "name": str(row['Company Sites']),
+            "website": None if pd.isna(website) else str(website),
             "city": str(row.get('City', '-')),
             "country": str(row.get('Country', '-')),
             "comp_desc": comp_desc,
