@@ -50,11 +50,33 @@ function updateDashboard(data) {
     document.getElementById('companyName').textContent = data.name;
     document.getElementById('badgeLoc').innerHTML = `<i class="fa-solid fa-location-dot"></i> ${data.city}, ${data.country}`;
     
-    const clusters = { 0: "Small Service Providers", 1: "Lean & IP-Driven Firms", 2: "Scaling Professional Firms", 3: "Industrial & Infrastructure", 4:"Cluster 4", 5:"Cluster 5", 6: "Cluster 6", "micro": "Micro & Low-Activity"};
-    const cName = clusters[data.cluster_id] || `Cluster ${data.cluster_id}`;
+    const clusters = { 0: "General B2B Services", 1: "Infrastructure & Communications", 2: "High-Efficiency Consultancies", 3: "High-Operation Service Firms", 4: "Industrial & Heavy Construction",  "micro": "Micro & Low-Activity"};
+    const cName = `Cluster ${data.cluster_id}: ${clusters[data.cluster_id] || ""}`;
     document.getElementById('badgeCluster').innerHTML = `<i class="fa-solid fa-diagram-project"></i> ${cName}`;
-    document.getElementById("badgeYearFounded").innerHTML = `<i class="fa-solid fa-calendar"></i> Founded in ${data.age}`;
-    
+    const yearText =
+        data.age &&
+            data.age !== "Unreported" &&
+            data.age !== "nan" &&
+            data.age !== "NaN"
+            ? `<i class="fa-solid fa-calendar"></i> Founded in ${data.age}`
+            : `<i class="fa-solid fa-calendar"></i> Founding Year Unreported`;
+    document.getElementById("badgeYearFounded").innerHTML = yearText;
+
+    // WEBSITE
+    const websiteBadge =
+        data.website &&
+            data.website !== "Website Unavailable"
+            ? `<i class="fa-solid fa-globe"></i>
+           <a href="${data.website.startsWith("http") ? data.website : "https://" + data.website}"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="badge-link">
+              ${data.website}
+           </a>`
+            : `<i class="fa-solid fa-globe"></i> Website Unavailable`;
+
+    document.getElementById("badgeWebsite").innerHTML = websiteBadge;
+
     // COMPANY DESCRIPTION
     const desc =
         data.comp_desc &&
@@ -62,9 +84,7 @@ function updateDashboard(data) {
             data.comp_desc !== "NaN"
             ? data.comp_desc
             : "No description available for this company.";
-
     document.getElementById("kpiDescription").innerText = desc;
-
 
     // KPIs
     const fmtMoney = n => !n ? "$0" : n < 1_000_000 ? `$${Math.floor(n / 1_000)}K` : `$${(n / 1_000_000).toFixed(2)}M`;
