@@ -16,44 +16,34 @@ app = Flask(
 
 CLUSTER_METADATA = {
     0: {
-        "name": "Small Service Providers",
-        "summary": "Established small to mid-sized service firms relying on human expertise.",
-        "key_traits": ["Service-driven revenue", "Moderate team sizes", "Regional focus"],
+        "name": "General B2B Services",
+        "summary": "The core service sector comprising advertising, IT, and accounting firms with steady, moderate revenue.",
+        "key_traits": ["Standard B2B", "Moderate Revenue", "Human-Capital Centric"],
     },
     1: {
-        "name": "Lean & IP-Driven Firms",
-        "summary": "High-revenue companies operating with extremely small teams.",
-        "key_traits": ["High rev/employee", "Expertise-driven", "Owner-led"],
+        "name": "Infrastructure & Communications",
+        "summary": "Niche service firms focused specifically on cable TV, telegraph, and specialized communication infrastructure.",
+        "key_traits": ["Communications Focus", "Specialized Tech", "Infrastructure-Heavy"],
     },
     2: {
-        "name": "Scaling Professional Firms",
-        "summary": "Growth-stage service companies expanding teams and market reach.",
-        "key_traits": ["Growing headcount", "Structured ops", "Balanced ratios"],
+        "name": "High-Efficiency Consultancies",
+        "summary": "Elite firms or asset-holding companies generating high revenue ($10M+) with very small, expert teams (~7 employees).",
+        "key_traits": ["High Revenue per Employee", "Lean Operations", "Asset-Light"],
     },
     3: {
-        "name": "Industrial & Infrastructure",
-        "summary": "Large, asset-heavy firms operating in manufacturing and utilities.",
-        "key_traits": ["Capital-intensive", "Large workforce", "Complex ops"],
+        "name": "High-Operation Service Firms",
+        "summary": "Traditional labor-intensive companies requiring larger workforces (~25 employees) to meet the $10M revenue mark.",
+        "key_traits": ["Labor-Intensive", "Scaling Workforce", "Operational Complexity"],
     },
     4: {
-        "name": "Cluster 4",
-        "summary": "Large, asset-heavy firms operating in manufacturing and utilities.",
-        "key_traits": ["Capital-intensive", "Large workforce", "Complex ops"],
+        "name": "Industrial & Heavy Construction",
+        "summary": "Large-scale manufacturing and heavy construction companies. The primary industrial segment of the market.",
+        "key_traits": ["Manufacturing", "Large Capital Assets", "Heavy Industry"],
     },
-    5: {
-        "name": "Cluster 5",
-        "summary": "Large, asset-heavy firms operating in manufacturing and utilities.",
-        "key_traits": ["Capital-intensive", "Large workforce", "Complex ops"],
-    },
-    6: {
-        "name": "Cluster 6",
-        "summary": "Large, asset-heavy firms operating in manufacturing and utilities.",
-        "key_traits": ["Capital-intensive", "Large workforce", "Complex ops"],
-    },  
     "micro": {
-        "name": "Micro & Low-Activity",
-        "summary": "Very small firms with limited economic footprint.",
-        "key_traits": ["Minimal revenue", "Small teams", "Early-stage"],
+        "name": "Retail & Low-Activity",
+        "summary": "Low-revenue retail businesses and data outliers that represent minimal commercial activity.",
+        "key_traits": ["Low Revenue", "Small Retail", "Minimal Infrastructure"],
     }
 }
 
@@ -61,9 +51,10 @@ try:
 
     with open("data/clustered_companies.pkl", "rb") as f:
         df = pickle.load(f)
+        print(df.columns.tolist())
 
-    for col in df.columns:
-        df[col] = df[col].astype(object)
+    # for col in df.columns:
+        # df[col] = df[col].astype(object)
     
     # Clean the column names (remove any hidden space)
     df.columns = df.columns.str.strip()
@@ -76,18 +67,18 @@ try:
 
     # Handle missing values
     df = df.fillna("N/A")
+    df = df.astype(object)
 
     # Ensure numeric columns are actually numeric
-    cols_to_numeric = ['Revenue (USD)', 'Employees Total', 'IT spend', 'Year Found']
+    cols_to_numeric = ['Revenue (USD)', 'Employees Total', 'IT spend', 'Year Found', 'Corporate Family Members', 'hybrid_Cluster']
     for col in cols_to_numeric:
         if col in df.columns:
-            df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0)
-
-
+            df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0).astype(int)
 
     # Pre-calculate Cluster Averages for the Graph
-    if 'Cluster' in df.columns:
-        cluster_stats = df.groupby('Cluster')[['Revenue (USD)', 'IT spend']].mean().to_dict(orient='index')
+    if 'hybrid_Cluster' in df.columns:
+        cluster_stats = df.groupby('hybrid_Cluster')[['Revenue (USD)', 'IT spend', 'Employees Total', 
+        'Corporate Family Members']].mean().to_dict(orient='index')
 
     else:
         cluster_stats = {}
@@ -129,34 +120,40 @@ def get_company():
         age = row.get('Year Found', 'Unreported')
 
         # Get Cluster Context
-        cid = row.get('Cluster', 0)
+        cid = row.get('hybrid_Cluster', 0)
         stats = cluster_stats.get(cid, {})
 
         # Get company description
         comp_desc = row.get('Company Description', 'No description available for this company.')
 
         # Find Nearest Neighbors (Same Cluster, Similar Revenue)
-        cluster_peers = df[df['Cluster'] == cid].copy()
+        cluster_peers = df[df['hybrid_Cluster'] == cid].copy()
         cluster_peers['diff'] = abs(cluster_peers['Revenue (USD)'] - row['Revenue (USD)'])
         
         # Get top 5 neighbors (excluding itself)
         neighbors = cluster_peers.sort_values('diff').head(6)
         neighbors = neighbors[neighbors['Company Sites'] != name].head(5)
         
-        neighbor_list = neighbors[['Company Sites', 'Revenue (USD)']].to_dict(orient='records')
+        # neighbor_list = neighbors[['Company Sites', 'Revenue (USD)']].to_dict(orient='records')
+        neighbor_list = []
+        for _, n_row in neighbors.iterrows():
+            neighbor_list.append({
+                "name": str(n_row['Company Sites']),
+                "revenue": float(n_row['Revenue (USD)'])
+            })
 
         response = {
-            "name": row['Company Sites'],
-            "city": row.get('City', '-'),
-            "country": row.get('Country', '-'),
-            "description": row.get('Company Description', 'Unknown'),
+            "name": str(row['Company Sites']),
+            "city": str(row.get('City', '-')),
+            "country": str(row.get('Country', '-')),
+            "description": str(row.get('Company Description', 'Unknown')),
             
-            # The 5 KPIs
-            "revenue": float(row.get('Revenue (USD)', 'Unreported')),
-            "employees": "Unreported" if row.get('Employees Total') == 0 else int(row.get('Employees Total')),
-            "age": age,
+            "revenue": float(row.get('Revenue (USD)', 0)) if row.get('Revenue (USD)') != 'Unreported' else 0,
+            "employees": "Unreported" if int(row.get('Employees Total')) == 0 else int(row.get('Employees Total')),
+            "age": int(age),
             "it_spend": float(row.get('IT spend', 0)),
-            "sic": row.get('SIC Description', 'Unknown'),
+            "sic": str(row.get('SIC Description', 'Unknown')),
+            "corp_family": int(row.get('Corporate Family Members', 0)),
 
             # Cluster Context for AI/Graph
             "cluster_id": int(cid),
@@ -183,6 +180,18 @@ def chat():
         context = data.get("context", {}) 
 
         # Create a summary of all clusters
+
+        # In the try-except block at the top of app.py
+        if 'hybrid_Cluster' in df.columns:
+            cluster_stats = df.groupby('hybrid_Cluster')[['Revenue (USD)', 'IT spend', 'Employees Total', 'Corporate Family Members']].mean().to_dict(orient='index')
+        
+        # 2. Get the most common industry for each cluster
+        top_industries = df.groupby('hybrid_Cluster')['SIC_2digit_Description'].agg(lambda x: x.mode().iloc[0] if not x.mode().empty else "General Services").to_dict()
+        
+        # 3. Add industry to stats
+        for cid in cluster_stats:
+            cluster_stats[cid]['top_industry'] = top_industries.get(cid, "General Services")
+
         all_clusters_summary = ""
         for cid_key, info in CLUSTER_METADATA.items():
             # Get stats if they exist in your cluster_stats dictionary
@@ -196,8 +205,11 @@ def chat():
             CLUSTER {cid_key} ({info['name']}):
             - Profile: {info['summary']}
             - Avg Revenue: {avg_rev}
+            - Avg IT Spend: {avg_it}
+            - Avg Team Size: {avg_emp} employees
+            - Avg Corp Family: {avg_fam} members
             - Traits: {", ".join(info['key_traits'])}
-            - Industries: {info.get('SIC_2digit_Description', 'Various')}
+            - Top Industry: {stats.get('top_industry', 'Various')}
             """
             
         # 2. Content Grounding
@@ -206,12 +218,12 @@ def chat():
         
         DATA COMPARISON RULES:
         - Compare the 'Target Company' against the 'Market Segmentation Data'.
-        - Specifically look at 'IT spend' vs 'Revenue' to determine if they are over or under-investing.
+        - Can look at 'IT spend' vs 'Revenue' to determine if they are over or under-investing.
         - Look at 'Corporate Family Members' to see if they are part of a large enterprise or a standalone firm.
         - If the company is a 'Branch' or 'Subsidiary' (from Entity Type), mention how that affects their decision-making.
 
         RULES:
-        - NEVER use asterisks (**), hashtags (#), or dashes (-) for bullet points.
+        - NEVER use asterisks (**), hashtags (#), or dashes (-) for bullet points in any circumstance.
         - DO NOT use any Markdown symbols whatsoever.
         - Use only standard capitalization and line breaks for structure.
         - If the 'Description' is missing or "N/A", use the 'SIC Industry' (Standard Industrial Classification) to explain what the company does.
@@ -226,12 +238,14 @@ def chat():
         TARGET COMPANY DATA:
 
         - Name: {context.get('name', 'N/A')}
+        - Year Founded: {context.get('age', 'N/A')}
         - Company Description: {context.get('description', 'N/A')}
         - SIC Industry Category: {context.get('sic', 'N/A')}
         - Revenue: ${context.get('revenue', 0):,.0f}
         - Employees: {context.get('employees', 'N/A')}
         - IT Spend: ${context.get('it_spend', 0):,.0f}
         - Current Cluster: {context.get('cluster_id', 'N/A')}
+        - Corporate Family Size: {context.get('corp_family', 'N/A')}
 
         
         Output Format:

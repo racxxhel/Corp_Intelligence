@@ -57,7 +57,8 @@ function updateDashboard(data) {
     // KPIs
     const fmtMoney = n => !n ? "$0" : n < 1_000_000 ? `$${Math.floor(n / 1_000)}K` : `$${(n / 1_000_000).toFixed(2)}M`;
     document.getElementById('kpiRevenue').textContent = fmtMoney(data.revenue);
-    document.getElementById('kpiEmployees').textContent = data.employees.toLocaleString();
+    document.getElementById('kpiEmployees').textContent = 
+        typeof data.employees === 'number' ? data.employees.toLocaleString() : data.employees;
     document.getElementById('kpiAge').textContent = data.age;
     document.getElementById('kpiIT').textContent = fmtMoney(data.it_spend);
     document.getElementById('kpiSIC').textContent = data.sic;
@@ -66,7 +67,7 @@ function updateDashboard(data) {
     const tbody = document.getElementById('neighborTable');
     tbody.innerHTML = '';
     data.neighbors.forEach(n => {
-        tbody.innerHTML += `<tr><td>${n['Company Sites']}</td><td>${fmtMoney(n['Revenue (USD)'])}</td></tr>`;
+        tbody.innerHTML += `<tr><td>${n.name}</td><td>${fmtMoney(n.revenue)}</td></tr>`;
     });
 
     // UPDATE CHART
