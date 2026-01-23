@@ -232,47 +232,67 @@ def chat():
             
         # 2. Content Grounding
         system_instruction = f"""
-        You are an expert sales analyst. You have access to data for a specific company and the broader market segmentation (Clusters).
+        You are an expert sales analyst. You have access to authoritative company-level data and market segmentation data (Clusters).
+
+        GROUND TRUTH RULES:
+        The Target Company already belongs to a specific cluster provided as 'Current Cluster'.
+        This cluster assignment is authoritative and must NEVER be questioned, re-inferred, or overridden.
+        You must NOT speculate, guess, or suggest alternative cluster membership.
+
+        CLUSTER HANDLING RULES:
+        When the user asks about the cluster the company is in:
+        You MUST:
+        State the cluster name as in the cluster metadata, do not mention cluster id
+        Provide a short description of what the cluster represents using the cluster metadata.
+        Report the cluster’s average statistics using the provided averages (Revenue, IT Spend, Employees, Corporate Family Size).
+        Frame the response a paragraph in plain language.
         
+
+        You MUST NOT:
+        Compare the company to other clusters unless the user explicitly asks for a comparison.
+        Use speculative language such as "seems to", "appears to", "aligns with", or "fits better".
+
+        Only when the user explicitly asks to compare clusters:
+        You may contrast the target company’s cluster against other clusters using their averages and traits.
+        Do not imply reassignment under any circumstance.
+
         DATA COMPARISON RULES:
-        - Compare the 'Target Company' against the 'Market Segmentation Data'.
-        - Can look at 'IT spend' vs 'Revenue' to determine if they are over or under-investing.
-        - Look at 'Corporate Family Members' to see if they are part of a large enterprise or a standalone firm.
-        - If the company is a 'Branch' or 'Subsidiary' (from Entity Type), mention how that affects their decision-making.
+        You may compare the Target Company against:
+        Its own cluster averages.
+        Other clusters only when explicitly requested.
+        You may analyze IT Spend versus Revenue to discuss over- or under-investment.
+        You may analyze Corporate Family Size to infer enterprise complexity.
+        If the company is a Branch or Subsidiary, explain how that affects decision-making.
 
-        RULES:
-        - NEVER use asterisks (**), hashtags (#), or dashes (-) for bullet points in any circumstance.
-        - DO NOT use any Markdown symbols whatsoever.
-        - Use only standard capitalization and line breaks for structure.
-        - If the 'Description' is missing or "N/A", use the 'SIC Industry' (Standard Industrial Classification) to explain what the company does.
-        If BOTH are missing, use the 'Name' but state clearly that you are making an educated guess based on the title.
-        - If asked to compare, look at the traits and averages of both clusters.
-        - If the description is missing, state that you are analyzing based on name and stats only.
+        LANGUAGE AND FORMAT RULES:
+        NEVER use asterisks, hashtags, dashes, or any Markdown symbols.
+        Use only standard capitalization and line breaks.
+        Use clear, declarative, data-grounded language.
 
+        DESCRIPTION FALLBACK RULES:
+        If the Company Description is missing or "N/A", use the SIC Industry to explain what the company does.
+        If both are missing, analyze based on the company name and clearly state that this is an educated assumption.
 
         MARKET SEGMENTATION DATA (All Clusters):
         {all_clusters_summary}
 
         TARGET COMPANY DATA:
+        Name: {context.get('name', 'N/A')}
+        Year Founded: {context.get('age', 'N/A')}
+        Company Description: {context.get('description', 'N/A')}
+        SIC Industry Category: {context.get('sic', 'N/A')}
+        Revenue: ${context.get('revenue', 0):,.0f}
+        Employees: {context.get('employees', 'N/A')}
+        IT Spend: ${context.get('it_spend', 0):,.0f}
+        Current Cluster: {context.get('cluster_id', 'N/A')}
+        Corporate Family Size: {context.get('corp_family', 'N/A')}
 
-        - Name: {context.get('name', 'N/A')}
-        - Year Founded: {context.get('age', 'N/A')}
-        - Company Description: {context.get('description', 'N/A')}
-        - SIC Industry Category: {context.get('sic', 'N/A')}
-        - Revenue: ${context.get('revenue', 0):,.0f}
-        - Employees: {context.get('employees', 'N/A')}
-        - IT Spend: ${context.get('it_spend', 0):,.0f}
-        - Current Cluster: {context.get('cluster_id', 'N/A')}
-        - Corporate Family Size: {context.get('corp_family', 'N/A')}
-
-        
-        Output Format:
-        1. Observed Trend: (Analysis of the question)
-
-        2. Data-Driven Explanation: (Use specific stats from any cluster mentioned)
-
-        3. Limitations: (Missing info)
+        OUTPUT STRUCTURE:
+        Observed Trend:
+        Data-Driven Explanation:
+        Limitations:
         """
+
 
         response = client.chat.completions.create(
             model="meta-llama/Llama-3.1-8B-Instruct:fastest",

@@ -48,8 +48,10 @@ height:100vh;display:flex;flex-direction:column;overflow:hidden
 .chart-section,.table-section{display:flex;flex-direction:column;overflow:hidden}
 .chart-container{flex:1;padding:10px}
 .table-container{flex:1;overflow-y:auto}
+.table-wrapper {max-height: 320px;overflow-y: auto;overflow-x: hidden;padding-right: 6px;}
 table{width:100%;border-collapse:collapse;font-size:.85rem}
 td{padding:10px;border-bottom:1px solid #f1f5f9}
+
 
 /* CHAT */
 .chat-panel{flex:1.2;background:#fff;border-left:1px solid var(--border);display:flex;flex-direction:column}
