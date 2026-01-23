@@ -65,6 +65,14 @@ pip install -r requirements.txt
 
 A token is needed to access the Large Lanuage Model through an API, which is used for our chatbot.
 
+1. Log in to huggingface.co. Go to Settings (click your profile picture) > Access Tokens.
+2. Click Create new token. Give it a name (e.g., "ClusteringProject") and set the type to Read.
+3. Copy the string (starts with hf_...). You will not be able to see this token anymore. 
+4. Create a file in the root folder exactly named .env and add the line as below: 
+
+```python
+HF_TOKEN=hf_your_actual_token_string_here
+```
 
 ## How to Run:
 
@@ -84,5 +92,6 @@ python app.py
 ```
 
 ## Results:
+
 
 ## Conclusion:
