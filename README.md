@@ -32,6 +32,10 @@ The project is organized into three main components:
 └── README.md                  # This README file.
 ```
 
+## Accessing the web application
+Users are able to access the application via https://sds-datathon-26.onrender.com/. 
+The web interface is deployed on Render (free version). Please be aware that the site may take up to a minute to load after 15 minutes of inactivity as the server reboots. To run the application locally instead, follow the steps below.
+
 ## Setup and Installation
 Follow these steps to set up the local environment to run the web application.
 
@@ -67,7 +71,7 @@ A token is needed to access the Large Lanuage Model through an API, which is use
 
 1. Log in to huggingface.co. Go to Settings (click your profile picture) > Access Tokens.
 2. Click Create new token. Give it a name (e.g., "ClusteringProject") and set the type to Read.
-3. Copy the string (starts with hf_...). You will not be able to see this token anymore. 
+3. Copy and save your access token (starts with hf_...). It is shown only once and cannot be retrieved later. 
 4. Create a file in the root folder exactly named .env and add the line as below: 
 
 ```python
@@ -93,5 +97,35 @@ python app.py
 
 ## Results:
 
+The primary value of this dataset lies in its multidimensionality, combining financial metrics with semantic descriptions. Our analysis proved that while traditional numerical clustering provides a baseline, the true "signal" is found in the intersection of firmographics and industry context.
+
+**Modelling**
+
+We used mainly 3 methods of clustering: K-Means Clustering, Hierarchical Clustering, Hybrid Semantic-Numeric Clustering. 
+
+The Hybrid Semantic-Numeric Clustering approach was selected as the final model for the following reason: 
+
+1. Unlike K-Means, which relied too heavily on financial metrics (such as revenue, employees), this model integrates Natural Language Processing (NLP). By using text embeddings of business descriptions, the model takes into account what a company does, not just based on numerical metrics. 
+
+2. Hierarchical Clustering proved too sensitive to outliers, creating clusters of just one company. The Hybrid model solved this by implementing a rule-based filter to separate "Micro" businesses (revenue > $50k) from active ones, ensuring that data noise didn't skew the results for established firms. 
+
+3. This model successfully separated "Hard Industries" (Manufacturing/Electronics) from "Soft Industries" (Consulting/Services), which the other models struggled to do clearly.
+
+**Key Discoveries**
+
+There were 6 clusters identified in total. 
+
+Cluster 0 represents the core "General Services" sector, containing the bulk of standard B2B companies in advertising, IT, and accounting with moderate revenue.
+Cluster 1 appears to be a niche subset of this group, likely separated by the text analysis because these firms focus specifically on infrastructure and communications, as evidenced by the unique presence of cable TV and telegraph services in their top categories.
+Cluster 2 and Cluster 3 demonstrate a powerful distinction in business models. Both groups earn roughly $10 million in revenue, but Cluster 2 is an "High-Efficiency" group that achieves this with only 7 employees, likely representing asset-holding firms or elite consultancies. In contrast, Cluster 3 is a "High-Operation" group that requires 25 employees to generate the same amount of money, indicating a more traditional, labor-intensive workforce.
+Cluster 4 is the standout success of this method, clearly isolating the big Industrial companies in manufacturing and heavy construction.
+Finally, the Micro Cluster captures the low-revenue retail businesses and data noise, ensuring they do not skew the statistics of the active commercial groups.
+
+To validate the high-dimensional clusters visually, we applied t-SNE (t-Distributed Stochastic Neighbor Embedding). The resulting visualization confirmed clear spatial separation, particularly highlighting the distinct isolation of the 'Hard Industries' (Cluster 4) from the 'Service' clusters.
+
+<img width="455" height="337" alt="Screenshot 2026-01-24 at 1 34 58 PM" src="https://github.com/user-attachments/assets/5a680440-1e97-4532-852e-d751314cb5ea" />
+
 
 ## Conclusion:
+Through this prototype, we have proved that this dataset is valuable in identifying high-revenue, low-headcount targets for B2B services, sector differentiation and strategic segmentation. 
+By moving beyond simple filters and adopting a Hybrid Semantic-Numeric clustering approach, we have successfully mapped the complex intricacies of the commercial landscape. By incorporating an interface and LLM, the insights gained from clustering are more readable to users and  transform the raw statistical outputs into natural language business intelligence. Through bridging the gap between data analytics and intuitive user interaction, the system allows non-technical stakeholders to query the market as if they were speaking to a specialized consultant.
