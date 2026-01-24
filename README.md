@@ -1,4 +1,4 @@
-# Corporate Clustering Prototype: IntelCorp Intelligence
+# Corporate Clustering Prototype: Corp Intelligence
 
 ## Project Overview
 
@@ -26,7 +26,7 @@ The project is organized into three main components:
 │       └── index.html
 ├── data/                   
 │   └── clustered_companies.pkl #pkl file with the cleaned company data and its respective clusters
-│   └── raw data #include raw data here and name it `champions_group_data.csv`
+│   └── raw data # For you to include raw data here and name it `champions_group_data.csv`
 ├── src/     
 │   └── CAT_A_ACC.ipynb # Python notebook which consists of the whole process of cleaning and clustering
 └── README.md                  # This README file.
