@@ -117,6 +117,7 @@ def search():
 @app.route("/api/get_company")
 def get_company():
     name = request.args.get('name')
+    metric = request.args.get("metric", "revenue")
     if df.empty:
         return jsonify({"error": "No data loaded"})
 
@@ -146,9 +147,18 @@ def get_company():
         stats = cluster_stats.get(cid, {})
 
         # ---------- Neighbors ----------
+        metric_map = {
+            "revenue": "Revenue (USD)",
+            "employees": "Employees Total",
+            "it_spend": "IT spend",
+            "year_founded": "Year Found"
+        }
+
+        metric_col = metric_map.get(metric, "Revenue (USD)")
+
         cluster_peers = df[df['hybrid_Cluster'] == cid].copy()
         cluster_peers['diff'] = abs(
-            cluster_peers['Revenue (USD)'] - row['Revenue (USD)']
+            cluster_peers[metric_col] - row[metric_col]
         )
 
         neighbors = (
@@ -161,7 +171,10 @@ def get_company():
         neighbor_list = [
             {
                 "name": str(n['Company Sites']),
-                "revenue": float(n['Revenue (USD)'])
+                "revenue": float(n['Revenue (USD)']),
+                "employees": float(n['Employees Total']),
+                "it_spend": float(n['IT spend']),
+                "year_founded": float(n['Year Found'])
             }
             for _, n in neighbors.iterrows()
         ]
