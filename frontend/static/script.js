@@ -45,16 +45,26 @@ document.getElementById('chatInput').addEventListener('keydown', function(e) {
 });
 
 function loadCompanyData(exactName) {
-    fetch(`/api/get_company?name=${encodeURIComponent(exactName)}`)
+    const metricSelect = document.getElementById('metricSelect');
+    const metric = metricSelect ? metricSelect.value : 'revenue';
+
+    fetch(`/api/get_company?name=${encodeURIComponent(exactName)}&metric=${metric}`)
         .then(res => res.json())
         .then(data => {
             if (data.error) { alert(data.error); return; }
             currentCompanyData = data;
-            updateDashboard(data);
+            updateDashboard(data, metric);
         });
 }
 
-function updateDashboard(data) {
+function reloadCompany() {
+    if (!currentCompanyData) return;
+    loadCompanyData(currentCompanyData.name);
+}
+
+
+function updateDashboard(data, metric = 'revenue') {
+
     // HEADER
     document.getElementById('companyName').textContent = data.name;
     document.getElementById('badgeLoc').innerHTML = `<i class="fa-solid fa-location-dot"></i> ${data.city}, ${data.country}`;
@@ -104,11 +114,43 @@ function updateDashboard(data) {
     document.getElementById('kpiSIC').textContent = data.sic;
 
     // NEIGHBORS TABLE
+    // NEIGHBORS TABLE (dynamic metric)
+    const metricLabels = {
+        revenue: "Revenue",
+        employees: "Employees",
+        it_spend: "IT Spend",
+        year_founded: "Year Founded"
+    };
+
+    const metricFormat = {
+        revenue: v => fmtMoney(v),
+        employees: v => v ? Math.round(v).toLocaleString() : "-",
+        it_spend: v => fmtMoney(v),
+        year_founded: v => v ? Math.round(v) : "-"
+    };
+
+    document.getElementById('neighborMetricHeader').innerText =
+        metricLabels[metric] || "Revenue";
+
     const tbody = document.getElementById('neighborTable');
     tbody.innerHTML = '';
+
     data.neighbors.forEach(n => {
-        tbody.innerHTML += `<tr><td>${n.name}</td><td>${fmtMoney(n.revenue)}</td></tr>`;
+        tbody.innerHTML += `
+            <tr>
+                <td>
+                    <a href="#"
+                        class="neighbor-link"
+                        data-company="${n.name}">
+                        ${n.name}
+                    </a>
+                </td>
+
+                <td>${metricFormat[metric](n[metric])}</td>
+            </tr>
+        `;
     });
+
 
     // UPDATE CHART
     updateChart(data);
@@ -203,4 +245,16 @@ function sendQuickPrompt(text) {
 
     // Trigger the existing send function
     // sendUserMessage();
+
 }
+
+
+
+document.getElementById('neighborTable').addEventListener('click', e => {
+    const link = e.target.closest('.neighbor-link');
+    if (!link) return;
+
+    e.preventDefault();
+    loadCompanyData(link.dataset.company);
+});
+

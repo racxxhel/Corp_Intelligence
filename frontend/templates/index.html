@@ -112,13 +112,24 @@
                         </h3>
                     </div>
 
+                            <!-- metric selector -->
+                    <div style="padding: 0 16px 8px;">
+                        <label for="metricSelect"><strong>Compare by:</strong></label>
+                        <select id="metricSelect" onchange="reloadCompany()">
+                            <option value="revenue">Revenue</option>
+                            <option value="employees">Employees</option>
+                            <option value="it_spend">IT Spend</option>
+                            <option value="year_founded">Year Founded</option>
+                        </select>
+                    </div>
+
                     <!-- KEY: wrapper enables horizontal scroll on mobile -->
                     <div class="table-wrapper">
                         <table>
                             <thead>
                                 <tr>
                                     <th>Company Name</th>
-                                    <th>Revenue</th>
+                                    <th id="neighborMetricHeader">Revenue</th>
                                 </tr>
                             </thead>
                             <tbody id="neighborTable"></tbody>

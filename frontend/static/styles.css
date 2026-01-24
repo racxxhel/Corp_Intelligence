@@ -51,6 +51,25 @@ height:100vh;display:flex;flex-direction:column;overflow:hidden
 .table-wrapper {max-height: 320px;overflow-y: auto;overflow-x: hidden;padding-right: 6px;}
 table{width:100%;border-collapse:collapse;font-size:.85rem}
 td{padding:10px;border-bottom:1px solid #f1f5f9}
+.neighbor-link {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 6px;              /* soft corners, not pill */
+    background-color: #f1f5ff;       /* very light blue */
+    color: #2563eb;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.neighbor-link:hover {
+    background-color: #dbe7ff;       /* lighter blue hover */
+    color: #1d4ed8;
+}
+
+
+
 
 
 /* CHAT */
