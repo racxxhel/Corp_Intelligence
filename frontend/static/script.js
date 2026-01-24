@@ -167,8 +167,26 @@ function updateDashboard(data, metric = 'revenue') {
 }
 
 function updateChart(data) {
-    const ctx = document.getElementById('performanceChart').getContext('2d');
+    const canvas = document.getElementById('performanceChart');
+    const ctx = canvas.getContext('2d');
+    
     if (perfChart) perfChart.destroy();
+
+    // Create Gradients
+    const gradientRevenue = ctx.createLinearGradient(0, 0, 0, 400);
+    gradientRevenue.addColorStop(0, '#06b6d4'); // Cyan Top
+    gradientRevenue.addColorStop(1, 'rgba(6, 182, 212, 0.1)'); // Cyan Fade
+
+    const gradientCluster = ctx.createLinearGradient(0, 0, 0, 400);
+    gradientCluster.addColorStop(0, '#e206f6'); // Slate Top
+    gradientCluster.addColorStop(1, 'rgba(246, 110, 237, 0.05)'); // Slate Fade
+
+    // Format Data for Chart
+    // Note: IT Spend is scaled up x10 for visibility, keep consistent with your logic
+    const revenueVal = data.revenue / 1_000_000;
+    const itSpendVal = (data.it_spend / 1_000_000) * 10;
+    const clusterRev = data.cluster_avg_rev / 1_000_000;
+    const clusterIt = (data.cluster_avg_it / 1_000_000) * 10;
 
     perfChart = new Chart(ctx, {
         type: 'bar',
@@ -177,17 +195,56 @@ function updateChart(data) {
             datasets: [
                 {
                     label: 'Selected Company',
-                    data: [data.revenue/1000000, (data.it_spend/1000000)*10],
-                    backgroundColor: '#2563eb', borderRadius: 4
+                    data: [revenueVal, itSpendVal],
+                    backgroundColor: gradientRevenue,
+                    borderColor: '#06b6d4',
+                    borderWidth: 1,
+                    borderRadius: 6,
+                    barPercentage: 0.6,
+                    categoryPercentage: 0.8
                 },
                 {
                     label: 'Cluster Average',
-                    data: [data.cluster_avg_rev/1000000, (data.cluster_avg_it/1000000)*10],
-                    backgroundColor: '#cbd5e1', borderRadius: 4
+                    data: [clusterRev, clusterIt],
+                    backgroundColor: gradientCluster,
+                    borderColor: '#64748b',
+                    borderWidth: 1,
+                    borderRadius: 6,
+                    barPercentage: 0.6,
+                    categoryPercentage: 0.8
                 }
             ]
         },
-        options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    labels: { color: '#cbd5e1', font: { family: 'Inter', size: 12 } }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                    titleColor: '#fff',
+                    bodyColor: '#cbd5e1',
+                    borderColor: 'rgba(255,255,255,0.1)',
+                    borderWidth: 1,
+                    padding: 10,
+                    cornerRadius: 8
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                    ticks: { color: '#94a3b8' },
+                    border: { display: false }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { color: '#cbd5e1', font: { weight: 'bold' } }
+                }
+            }
+        }
     });
 }
 
