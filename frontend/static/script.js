@@ -248,8 +248,11 @@ function updateChart(data) {
     });
 }
 
-function toggleChat(){
-  document.querySelector('.chat-panel').classList.toggle('active');
+function toggleChat() {
+    const panel = document.getElementById('chatPanel');
+    panel.classList.toggle('active');
+    
+    document.body.classList.toggle('chat-open'); 
 }
 
 function displayMessage(sender, message) {
@@ -310,4 +313,24 @@ document.getElementById('neighborTable').addEventListener('click', e => {
 
     e.preventDefault();
     loadCompanyData(link.dataset.company);
+});
+
+// AUTO-RESIZE TEXTAREA
+const chatInput = document.getElementById('chatInput');
+
+chatInput.addEventListener('input', function() {
+    this.style.height = 'auto'; // Reset height to recalculate
+    this.style.height = (this.scrollHeight) + 'px'; // Set to new content height
+});
+
+// MODIFIED ENTER KEY SUPPORT
+// We need to check if Shift+Enter is pressed (new line) vs just Enter (send)
+chatInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault(); // Stop new line
+        sendUserMessage();
+        
+        // Reset height after sending
+        this.style.height = 'auto'; 
+    }
 });
