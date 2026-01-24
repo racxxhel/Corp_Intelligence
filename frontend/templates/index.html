@@ -137,9 +137,15 @@
         </section>
 
         <!-- CHAT -->
-        <aside class="chat-panel">
+        <aside class="chat-panel" id="chatPanel">
             <div class="chat-header">
-                <i class="fa-solid fa-robot"></i> AI Strategic Analyst
+                <div style="display:flex; align-items:center; gap:10px">
+                    <i class="fa-solid fa-robot"></i> AI Strategic Analyst
+                </div>
+
+                <button onclick="toggleChat()" style= "background:none; border:none; color:var(--text-muted); font-size:1.5rem; cursor:pointer;">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
             </div>
 
             <div class="chat-window" id="chatContainer">
@@ -166,7 +172,7 @@
             </div>
 
             <div class="input-area">
-                <input type="text" id="chatInput" placeholder="Ask about risks...">
+                <textarea id="chatInput" placeholder="Ask about risks..." rows="1"></textarea>
                 <button class="send-btn" onclick="sendUserMessage()">
                     <i class="fa-solid fa-paper-plane"></i>
                 </button>
@@ -176,6 +182,11 @@
     </main>
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
+    
+    <button class="chat-float-btn" onclick="toggleChat()">
+        <i class="fa-solid fa-robot"></i>
+    </button>
+
 </body>
 
 </html>
