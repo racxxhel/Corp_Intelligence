@@ -128,4 +128,4 @@ To validate the high-dimensional clusters visually, we applied t-SNE (t-Distribu
 
 ## Conclusion:
 Through this prototype, we have proved that this dataset is valuable in identifying high-revenue, low-headcount targets for B2B services, sector differentiation and strategic segmentation. 
-By moving beyond simple filters and adopting a Hybrid Semantic-Numeric clustering approach, we have successfully mapped the complex intricacies of the commercial landscape.
+By moving beyond simple filters and adopting a Hybrid Semantic-Numeric clustering approach, we have successfully mapped the complex intricacies of the commercial landscape. By incorporating an interface and LLM, the insights gained from clustering are more readable to users and  transform the raw statistical outputs into natural language business intelligence. Through bridging the gap between data analytics and intuitive user interaction, the system allows non-technical stakeholders to query the market as if they were speaking to a specialized consultant.
