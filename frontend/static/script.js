@@ -35,6 +35,15 @@ document.addEventListener('click', function(e) {
     }
 });
 
+// Pressing on 'Enter' button
+// Add Enter key support for the chat input
+document.getElementById('chatInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        sendUserMessage();
+    }
+});
+
 function loadCompanyData(exactName) {
     fetch(`/api/get_company?name=${encodeURIComponent(exactName)}`)
         .then(res => res.json())
@@ -162,6 +171,14 @@ async function sendUserMessage() {
     displayMessage("You", userMessage); 
     chatInputElement.value = "";
 
+    // Creating the 'Loading' placeholder for the AI
+    const chatContainer = document.getElementById('chatContainer');
+    const loadingDiv = document.createElement('div');
+    loadingDiv.className = `message ai`;
+    loadingDiv.innerHTML = `<p><strong>AI:</strong> <span class="loading-text">Thinking...</span></p>`;
+    chatContainer.appendChild(loadingDiv);
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+
     try {
         const response = await fetch("/api/chat", {
             method: "POST",
@@ -182,7 +199,8 @@ async function sendUserMessage() {
 function sendQuickPrompt(text) {
     const chatInput = document.getElementById("chatInput");
     chatInput.value = text;
-    
+    chatInput.focus();
+
     // Trigger the existing send function
-    sendUserMessage();
+    // sendUserMessage();
 }
