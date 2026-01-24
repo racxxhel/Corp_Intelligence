@@ -1,3 +1,4 @@
 src/*.ipynb
 src/**/.ipynb
 .ipynb_checkpoints/
+.env

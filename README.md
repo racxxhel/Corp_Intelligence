@@ -8,36 +8,12 @@ The project is organized into three main components:
 
 ***Data Cleaning and Clustering*** (`CAT_A_ACC.ipynb`): This Jupyter Notebook provides a detailed, step-by-step documentation of the original development and experimentation process. It involves Exploratory Data Analysis and clustering of the data. 
 
-***Final Model*** (`clustered_companies.pkl`): This pkl file consists of the cleaned company data with its respective cluster. This pkl file will be further used for our interactive web application (`app.py`)
+***Final Model*** (`clustered_companies.pkl`): This pkl file consists of the cleaned company data with its respective cluster. This pkl file will be further used for our interactive web application.
 
-***Interactive Web Application*** (`app.py`): A web app built with Flask that allows user to find out more details on their interested company and discover the scope and usefulness of the data.
-
-## Project Structure
-```plaintext
-.
-├── app.py                     # Backend script for the Flask web application.
-├── requirements.txt           # A list of required Python packages.
-├── .gitignore                 # Specifies files for Git to ignore.
-├── frontend/                  # Contains all frontend files for the web app.
-│   ├── static/
-│   │   └── script.js
-│   │   └── styles.css
-│   └── templates/
-│       └── index.html
-├── data/                   
-│   └── clustered_companies.pkl #pkl file with the cleaned company data and its respective clusters
-│   └── raw data # For you to include raw data here and name it `champions_group_data.csv`
-├── src/     
-│   └── CAT_A_ACC.ipynb # Python notebook which consists of the whole process of cleaning and clustering
-└── README.md                  # This README file.
-```
-
-## Accessing the web application
-Users are able to access the application via https://sds-datathon-26.onrender.com/. 
-The web interface is deployed on Render (free version). Please be aware that the site may take up to 5 minutes to load after 15 minutes of inactivity as the server reboots. To run the application locally instead, follow the steps below.
+***Interactive Web Application***: A web app built with Flask that allows user to find out more details on their interested company and discover the scope and usefulness of the data.
 
 ## Setup and Installation
-Follow these steps to set up the local environment to run the web application.
+Follow these steps to set up the local environment to run the experiment and reproduce the results.
 
 **1. Create a virtual environment named 'venv'**
 ```bash
@@ -59,38 +35,18 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-**3. Create a Hugging Face Token**
-
-A token is needed to access the Large Lanuage Model through an API, which is used for our chatbot.
-
-1. Log in to huggingface.co. Go to Settings (click your profile picture) > Access Tokens.
-2. Click Create new token. Give it a name (e.g., "ClusteringProject") and set the type to Read.
-3. Copy and save your access token (starts with hf_...). It is shown only once and cannot be retrieved later. 
-4. Create a file in the root folder exactly named .env and add the line as below: 
-
-```python
-HF_TOKEN=hf_your_actual_token_string_here
-```
-
 ## How to Run:
 
 There are two main components to this project: reproducing the experiments and running the web app.
 
 **1. Reproducing the Results**
 
-You may reproduce the results of our notebook and clustering by simply running the whole `CAT_A_ACC.ipynb` file. Do remember to include your raw file in the data folder and name it `champions_group_data.csv`.
+You may reproduce the results of our notebook and clustering by simply running the whole `CAT_A_ACC.ipynb` file. Do remember to include your raw file`champions_group_data.csv`.
 
 **2. Running the Flask Web App**
 
-The Flask app allows you to interactively test and compare the two fine-tuned models.
-
-Access either through https://sds-datathon-26.onrender.com/. or 
-
-Run the app from your terminal: 
-```bash
-python app.py
-```
-
+Users are able to access the application via https://sds-datathon-26.onrender.com/. 
+The web interface is deployed on Render (free version). Please be aware that the site may take up to 10 minutes to load after 15 minutes of inactivity as the server reboots. To run the application locally instead, follow the steps below.
 
 ## Results:
 
@@ -119,9 +75,6 @@ Cluster 4 is the standout success of this method, clearly isolating the big Indu
 Finally, the Micro Cluster captures the low-revenue retail businesses and data noise, ensuring they do not skew the statistics of the active commercial groups.
 
 To validate the high-dimensional clusters visually, we applied t-SNE (t-Distributed Stochastic Neighbor Embedding). The resulting visualization confirmed clear spatial separation, particularly highlighting the distinct isolation of the 'Hard Industries' (Cluster 4) from the 'Service' clusters.
-
-<img width="455" height="337" alt="Screenshot 2026-01-24 at 1 34 58 PM" src="https://github.com/user-attachments/assets/5a680440-1e97-4532-852e-d751314cb5ea" />
-
 
 ## Conclusion:
 Through this prototype, we have proved that this dataset is valuable in identifying high-revenue, low-headcount targets for B2B services, sector differentiation and strategic segmentation. 
