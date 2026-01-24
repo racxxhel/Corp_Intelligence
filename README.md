@@ -122,6 +122,8 @@ Cluster 4 is the standout success of this method, clearly isolating the big Indu
 Finally, the Micro Cluster captures the low-revenue retail businesses and data noise, ensuring they do not skew the statistics of the active commercial groups.
 
 To validate the high-dimensional clusters visually, we applied t-SNE (t-Distributed Stochastic Neighbor Embedding). The resulting visualization confirmed clear spatial separation, particularly highlighting the distinct isolation of the 'Hard Industries' (Cluster 4) from the 'Service' clusters.
+<img width="455" height="337" alt="Screenshot 2026-01-24 at 1 34 58 PM" src="https://github.com/user-attachments/assets/5a680440-1e97-4532-852e-d751314cb5ea" />
+
 
 ## Conclusion:
 Through this prototype, we have proved that this dataset is valuable in identifying high-revenue, low-headcount targets for B2B services, sector differentiation and strategic segmentation. 
