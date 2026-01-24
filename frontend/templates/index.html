@@ -27,11 +27,7 @@
                 <div id="searchResults" class="search-results"></div>
             </div>
 
-            <button class="chat-toggle" onclick="toggleChat()">
-                <i class="fa-solid fa-robot"></i>
-            </button>
-
-        </div>
+            </div>
     </nav>
 
     <main class="main-layout">
@@ -60,49 +56,49 @@
             <!-- COMPANY DESCRIPTION -->
             <section class="company-description">
                 <div class="card">
-                    <div class="label">Company Description</div>
+                    <div class="card glass-panel"> <div class="label">Company Description</div>
                     <div class="description" id="kpiDescription">--</div>
                 </div>
             </section>
 
             <!-- KPI GRID -->
             <section class="kpi-grid">
-                <div class="card">
-                    <div class="label">Annual Revenue</div>
+                <div class="card glass-panel">
+                    <div class="label">
+                        <i class="fa-solid fa-dollar-sign" style="color:#4ade80; margin-right:5px;"></i> 
+                        Annual Revenue
+                    </div>
                     <div class="value" id="kpiRevenue">--</div>
                 </div>
-
-                <div class="card">
-                    <div class="label">Total Employees</div>
+                
+                <div class="card glass-panel">
+                    <div class="label"><i class="fa-solid fa-users" style="color:var(--primary)"></i> Total Employees</div>
                     <div class="value" id="kpiEmployees">--</div>
-                </div>
+                 </div>
 
-                <div class="card">
-                    <div class="label">Est. IT Spend</div>
+                <div class="card glass-panel">
+                    <div class="label"><i class="fa-solid fa-server" style="color:yellow"></i> Est. IT Spend</div>
                     <div class="value" id="kpiIT">--</div>
                 </div>
 
-                <div class="card">
-                    <div class="label">Industry (SIC)</div>
-                    <div class="value" id="kpiSIC">--</div>
-                </div>
+                <div class="card glass-panel">
+                    <div class="label"><i class="fa-solid fa-industry" style="color:var(--success)"></i> Industry (SIC)</div>
+                    <div class="value" id="kpiSIC" style="font-size:1.2rem; margin-top:5px">--</div>
+                 </div>
             </section>
 
             <!-- CONTENT GRID -->
-            <section class="content-grid">
+            <section class="content-flex">
 
-                <div class="card chart-section">
+                <div class="card glass-panel chart-section">
                     <div class="card-header">
-                        <h3>
-                            <i class="fa-solid fa-chart-column"></i>
-                            Performance vs Cluster Avg
-                        </h3>
+                        <h3><i class="fa-solid fa-chart-column" style="color:var(--primary)"></i> Performance vs Cluster Avg</h3>
                     </div>
-
-                    <div class="chart-container">
+                    <div class="chart-container">    
                         <canvas id="performanceChart"></canvas>
                     </div>
                 </div>
+                
 
                 <div class="card table-section">
                     <div class="card-header">
