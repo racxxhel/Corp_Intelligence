@@ -272,28 +272,50 @@ select {
 
 /* --- 3. MOBILE TRANSFORM (The "Slide Up" Magic) --- */
 @media(max-width: 768px) {
+    /* --- 1. Fix the Height for iPhone --- */
     .chat-panel {
-        /* Full Screen Override */
         width: 100%;
         top: 0;
         left: 0;
-        height: 100vh; /* Force full height */
-        border-left: none;
         
-        /* CHANGE ANIMATION: Slide from Bottom */
-        transform: translateY(100%); 
-    }
-    
-    .chat-panel.active {
-        transform: translateY(0); /* Slides Up */
+        /* KEY FIX: 100dvh accounts for the mobile browser address bar */
+        height: 100dvh; 
+        
+        border-left: none;
+        transform: translateY(100%);
+        z-index: 9999; /* Ensure it's on top of everything */
     }
 
-    /* Move button slightly on mobile so it doesn't block content */
+    .chat-panel.active {
+        transform: translateY(0);
+    }
+
+    /* --- 2. Make the middle scrollable area shrink correctly --- */
+    .chat-window {
+        flex: 1;        /* Take up available space */
+        min-height: 0;  /* CRITICAL: Allows it to shrink so input fits */
+    }
+
+    /* --- 3. Fix the Input Area for iPhone X/11/12/13/14/15 --- */
+    .input-area {
+        /* Add extra padding at bottom for the 'Home Swipe' bar */
+        padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+        flex-shrink: 0; /* Never let this box get squashed */
+    }
+
+    /* --- 4. Ensure Prompts don't eat all the space --- */
+    .sample-prompts {
+        display: none; /* Optional: Hide prompts on mobile to save space? */
+        /* OR keep them but ensure they don't wrap */
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 10px;
+        flex-shrink: 0;
+    }
+    
     .chat-float-btn {
-        bottom: 20px;
+        bottom: 80px; /* Move robot button up so it doesn't hide behind Safari bar */
         right: 20px;
-        width: 56px;
-        height: 56px;
     }
 }
 
