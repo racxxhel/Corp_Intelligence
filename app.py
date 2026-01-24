@@ -49,15 +49,15 @@ CLUSTER_METADATA = {
 }
 
 try:
-
     with open("data/clustered_companies.pkl", "rb") as f:
         df = pickle.load(f)
 
-    # for col in df.columns:
-        # df[col] = df[col].astype(object)
+    for col in df.columns:
+        df[col] = df[col].astype(object)
     
     # Clean the column names (remove any hidden space)
     df.columns = df.columns.str.strip()
+    print("still working..")
     
     # OLD ONE: Fix String and Object types to remove trailing whitespace 
     #for col in df.columns:
@@ -68,11 +68,10 @@ try:
     # NEW ONE: Clean all object & string columns safely
     for col in df.columns:
         # captures both old version objects and new version StringDtype
+
         if pd.api.types.is_object_dtype(df[col]) or pd.api.types.is_string_dtype(df[col]):
             # .replace handles the non-breaking spaces
             df[col] = df[col].astype(str).str.replace(u'\xa0', u' ').str.strip()
-
-
 
     # Handle missing values
     df = df.fillna("N/A")
