@@ -26,7 +26,7 @@ The project is organized into three main components:
 │       └── index.html
 ├── data/                   
 │   └── clustered_companies.pkl #pkl file with the cleaned company data and its respective clusters
-│   └── champions_group_data.csvl #raw file (I BELIEVE WE HAVE TO REMOVE)
+│   └── raw data #include raw data here and name it `champions_group_data.csv`
 ├── src/     
 │   └── CAT_A_ACC.ipynb # Python notebook which consists of the whole process of cleaning and clustering
 └── README.md                  # This README file.
@@ -34,18 +34,12 @@ The project is organized into three main components:
 
 ## Accessing the web application
 Users are able to access the application via https://sds-datathon-26.onrender.com/. 
-The web interface is deployed on Render (free version). Please be aware that the site may take up to a minute to load after 15 minutes of inactivity as the server reboots. To run the application locally instead, follow the steps below.
+The web interface is deployed on Render (free version). Please be aware that the site may take up to 5 minutes to load after 15 minutes of inactivity as the server reboots. To run the application locally instead, follow the steps below.
 
 ## Setup and Installation
 Follow these steps to set up the local environment to run the web application.
 
-**1. Clone the Repository**
-```bash
-git clone https://github.com/racxxhel/SDS_Datathon-26.git
-
-cd Coporate Clustering Prototype: IntelCorp Intelligence
-```
-**2. Create a virtual environment named 'venv'**
+**1. Create a virtual environment named 'venv'**
 ```bash
 python -m venv venv
 ```
@@ -60,12 +54,12 @@ source venv/bin/activate
 .\venv\Scripts\activate
 ```
 
-**3. Install Dependencies**
+**2. Install Dependencies**
 ```bash
 pip install -r requirements.txt
 ```
 
-**4. Create a Hugging Face Token**
+**3. Create a Hugging Face Token**
 
 A token is needed to access the Large Lanuage Model through an API, which is used for our chatbot.
 
@@ -84,16 +78,19 @@ There are two main components to this project: reproducing the experiments and r
 
 **1. Reproducing the Results**
 
-You may reproduce the results of our notebook and clustering by simply running the whole `CAT_A_ACC.ipynb` file.
+You may reproduce the results of our notebook and clustering by simply running the whole `CAT_A_ACC.ipynb` file. Do remember to include your raw file in the data folder and name it `champions_group_data.csv`.
 
 **2. Running the Flask Web App**
 
 The Flask app allows you to interactively test and compare the two fine-tuned models.
 
+Access either through https://sds-datathon-26.onrender.com/. or 
+
 Run the app from your terminal: 
 ```bash
 python app.py
 ```
+
 
 ## Results:
 
