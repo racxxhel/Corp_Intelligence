@@ -37,14 +37,6 @@ pip install -r requirements.txt
 
 ## How to Run:
 
-There are two main components to this project: reproducing the experiments and running the web app.
-
-**1. Reproducing the Results**
-
-You may reproduce the results of our notebook and clustering by simply running the whole `CAT_A_ACC.ipynb` file. Do remember to include your raw file`champions_group_data.csv`.
-
-**2. Running the Flask Web App**
-
 Users are able to access the application via https://sds-datathon-26.onrender.com/. 
 The web interface is deployed on Render (free version). Please be aware that the site may take up to 10 minutes to load after 15 minutes of inactivity as the server reboots. To run the application locally instead, follow the steps below.
 
